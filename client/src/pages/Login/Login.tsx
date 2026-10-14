@@ -13,7 +13,8 @@ import {
   ArrowRight,
   Check,
 } from 'lucide-react'
-
+import Button from "../../components/Ui/Button";
+import { GoogleLogin } from "@react-oauth/google";
 interface LoginForm{
     email:string,
     password: string;
@@ -21,8 +22,7 @@ interface LoginForm{
 
 
 const Login = ()=> {
- const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 const [loginFormData,setLoginFormData] = useState<LoginForm>({
@@ -31,16 +31,16 @@ const [loginFormData,setLoginFormData] = useState<LoginForm>({
 })
 
 const [errors,setErrors] = useState<{
-    emailError: string,
-    passwordError: string
+    email: string,
+    password: string
 }>({
-emailError: "",
-passwordError:""
+email: "",
+password:""
 })
 
 
 
-  const  handleSubmit = (evt: React.FormEvent<HTMLFormElement>)=> {
+  const  handleSubmit = async (evt: React.FormEvent<HTMLFormElement>)=> {
 
     const newErrors = {
         email:"",
@@ -61,6 +61,20 @@ passwordError:""
     setErrors(newErrors);
     return
   }
+ const response = await fetch("http://localhost:5000/api/login",{
+  method:"POST",
+  headers: {
+    "Content-Type":"application/json"
+  },
+   body:JSON.stringify({
+      email: loginFormData.email,
+      password: loginFormData.password
+    })
+ })
+
+ const data = await response.json();
+ console.log(data);
+ 
   }
 
 
@@ -99,12 +113,14 @@ passwordError:""
               id="email"
               type="email"
               placeholder="mariam@example.com"
-              value={email}
+              value={loginFormData.email}
               onChange={handleChange}
               autoComplete="email"
               name="email"
               required
             />
+
+            {errors && <span>{errors.email}</span>}
           </div>
         </div>
 
@@ -124,20 +140,23 @@ passwordError:""
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={loginFormData.password}
+              onChange={handleChange}
               autoComplete="current-password"
               required
+              name="password"
             />
 
-            <button
+            <Button
               type="button"
               className={styles.passwordToggle}
               onClick={() => setShowPassword((prev) => !prev)}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
-            </button>
+            </Button>
+
+            {errors && <span>{errors.password}</span>}
           </div>
         </div>
 
@@ -166,10 +185,33 @@ passwordError:""
           <span />
         </div>
 
-        <button type="button" className={styles.socialButton}>
+        {/* <button type="button" className={styles.socialButton}>
           <span className={styles.googleIcon}>G</span>
           Continue with Google
-        </button>
+        </button> */}
+
+        <GoogleLogin
+  onSuccess={async(response) => {
+    const credential = response.credential;
+
+  const result = await fetch(
+    "http://localhost:5000/api/auth/google",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ credential }),
+    }
+  );
+
+  const data = await result.json();
+  console.log(data);
+  }}
+  onError={() => {
+    console.log("Google Login Failed");
+  }}
+/>
 
         <button type="button" className={styles.socialButton}>
           <span className={styles.appleIcon}>●</span>

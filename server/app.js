@@ -6,6 +6,8 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import morgan from 'morgan'
 import registerRouter from "./routes/registerRoute.js";
+import loginRouter from "./routes/loginRoute.js";
+import googleRouter from "./routes/googleAuthRoute.js";
 
 const app = express();
 dotenv.config();
@@ -26,6 +28,8 @@ app.use(bodyParser.urlencoded({extended: true}))
 //api routes for pages
 
 app.use(registerRouter)
+app.use(loginRouter);
+app.use(googleRouter);
 
 
 

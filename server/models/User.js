@@ -1,45 +1,65 @@
+import mongoose from "mongoose";
 
-import mongoose from 'mongoose';
-
-
-const UserSchema = new mongoose.Schema({
-    username:{
-        type: String,
-        required: true,
-
+const UserSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: true,
+      trim: true,
     },
+
     email: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
+
     password: {
-        type: String,
-        required: true,
+      type: String,
+      required: function () {
+        return this.provider === "local";
+      },
     },
-    confirmPassword:{
-    type: String,
-    required: true
+
+    phoneNumber: {
+      type: String,
+      default: "",
     },
-    phoneNumber:{
-        type: String,
-        required: true
+
+    provider: {
+      type: String,
+      enum: ["local", "google", "apple"],
+      default: "local",
     },
-    role:{
-        type: String,
-         enum:["admin", "user"],
-    default: "user"
-    } 
-   
-},
-{
-    timeStamps: true
-}
 
+    providerId: {
+      type: String,
+      default: null,
+    },
 
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-)
+UserSchema.index(
+  { provider: 1, providerId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      providerId: { $type: "string" },
+    },
+  }
+);
 
+const UserModel = mongoose.model("User", UserSchema);
 
-const UserModel = mongoose.model("UserSchema", UserSchema);
 export default UserModel;
-

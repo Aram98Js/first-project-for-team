@@ -11,8 +11,8 @@ if(!authHeader){
             msg:"Authorization header missing"
         });
 }
-const token = authHeader.split(" ")[1];
-if(!token && !token.startsWith("Bearer")){
+const [token,type] = authHeader.split(" ")
+if(!token && type !== "Bearer"){
     return res.status(401).json({
          msg:"Token missing"
     })

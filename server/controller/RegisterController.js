@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
+import UserModel from '../models/User.js';
 const RegisterController = async(req,res)=>{
 try {
    const{username,email,password,confirmPassword,phoneNumber} = req.body;

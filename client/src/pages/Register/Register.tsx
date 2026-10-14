@@ -1,6 +1,8 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import styles from './register.module.scss'
+import Button from "../../components/Ui/Button";
 import {
   UserRound,
   Mail,
@@ -12,14 +14,64 @@ import {
   ArrowRight,
   Check,
 } from "lucide-react";
+import { GoogleLogin } from "@react-oauth/google";
 
-import styles from "./Register.module.scss";
-import Button from "../../components/Ui/Button";
+interface RegisterFormData{
+  username: string,
+  email: string,
+  password: string,
+  confirmPassword: string,
+  phoneNumber: string,
+  country: string,
+}
 
-function Register() {
+
+const Register = ()=> {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [registerFormData,setRegisterFormData] = useState<RegisterFormData>({
+    username:"",
+    email:"",
+    password:"",
+    confirmPassword:"",
+    phoneNumber:"",
+    country:""
+  })
 
+
+  const handleSumbit = async(evt: React.FormEvent<HTMLFormElement>)=>{
+        evt.preventDefault()
+    try {
+      const response = await fetch("http://localhost:5000/api/register",{
+        method:"POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: registerFormData.username,
+          email: registerFormData.email,
+          password: registerFormData.password,
+          confirmPassword: registerFormData.confirmPassword,
+          phoneNumber: registerFormData.phoneNumber,
+          country: registerFormData.country
+        })
+      })
+
+      const data = await response.json();
+      console.log(data);
+      
+    } catch (error) {
+      console.error(error)
+    }
+
+  }
+
+  const handleChange = (evt:React.ChangeEvent<HTMLInputElement>)=>{
+  setRegisterFormData({
+    ...registerFormData,
+    [evt.target.name]: evt.target.value
+  })
+}
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
@@ -35,9 +87,7 @@ function Register() {
 
       <form
         className={styles.form}
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
+        onSubmit={handleSumbit}
       >
         <div className={styles.fieldRow}>
           <label className={styles.field}>
@@ -46,10 +96,12 @@ function Register() {
             </span>
 
             <input
+            onChange={handleChange}
               type="text"
+              value={registerFormData.username}
               placeholder="Full name"
               autoComplete="name"
-              name="name"
+              name="username"
               required
             />
           </label>
@@ -60,7 +112,9 @@ function Register() {
             </span>
 
             <input
+            onChange={handleChange}
               type="email"
+              value={registerFormData.email}
               placeholder="Email address"
               autoComplete="email"
               name="email"
@@ -80,6 +134,8 @@ function Register() {
           </span>
 
           <input
+          onChange={handleChange}
+            value={registerFormData.password}
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             autoComplete="new-password"
@@ -108,6 +164,7 @@ function Register() {
           </span>
 
           <input
+            value={registerFormData.confirmPassword}
             type={showConfirmPassword ? "text" : "password"}
             placeholder="Confirm password"
             autoComplete="new-password"
@@ -140,13 +197,16 @@ function Register() {
               <Globe size={17} />
             </span>
 
-            <select defaultValue="Armenia" aria-label="Country">
-              <option value="Armenia">Armenia</option>
-              <option value="Georgia">Georgia</option>
-              <option value="France">France</option>
-              <option value="Italy">Italy</option>
-              <option value="United States">United States</option>
-            </select>
+
+            <input
+              type="text"
+              placeholder="Country"
+              autoComplete="country"
+              name="country"
+              required
+            />
+     
+
           </label>
 
           <label className={styles.field}>
@@ -155,6 +215,8 @@ function Register() {
             </span>
 
             <input
+              value={registerFormData.phoneNumber}
+              onChange={handleChange}
               type="tel"
               placeholder="Phone (optional)"
               autoComplete="tel"
@@ -188,10 +250,28 @@ function Register() {
         </div>
 
         <div className={styles.socialButtons}>
-          <Button onClick={()=>alert("hello")} className={styles.socialButton}>
-            <span className={styles.googleIcon}>G</span>
-            Google
-          </Button>
+          <GoogleLogin
+          onSuccess={async(response) => {
+            const credential = response.credential;
+        
+          const result = await fetch(
+            "http://localhost:5000/api/auth/google",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ credential }),
+            }
+          );
+        
+          const data = await result.json();
+          console.log(data);
+          }}
+          onError={() => {
+            console.log("Google Login Failed");
+          }}
+        />
 
           <Button onClick={()=>alert("hello")} className={styles.socialButton}>
             <span className={styles.appleIcon}>●</span>

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt"
 import jwt from 'jsonwebtoken';
-import UserModel from "../models/User";
+import UserModel from "../models/User.js";
 
 
 const LoginController = async(req,res)=>{

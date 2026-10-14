@@ -1,0 +1,296 @@
+
+.card {
+  width: 100%;
+  max-width: 470px;
+  margin: 0 auto;
+  padding: 38px 34px;
+  background: #ffffff;
+  border: 1px solid #e9edf3;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(20, 40, 80, 0.08);
+  box-sizing: border-box;
+}
+
+.cardHeader {
+  text-align: center;
+  margin-bottom: 30px;
+
+  h2 {
+    margin: 12px 0 10px;
+    color: #17243a;
+    font-size: 27px;
+    font-weight: 750;
+    letter-spacing: -0.8px;
+  }
+}
+
+.iconWrapper {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2878f0, #1755d1);
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(40, 120, 240, 0.22);
+}
+
+.eyebrow {
+  margin: 0;
+  color: #2878f0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.description {
+  max-width: 340px;
+  margin: 0 auto;
+  color: #7a8597;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+
+  > label,
+  .labelRow label {
+    color: #344158;
+    font-size: 13px;
+    font-weight: 650;
+  }
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.forgotLink {
+  color: #2878f0;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.inputWrapper {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 15px;
+  border: 1px solid #e1e7f0;
+  border-radius: 12px;
+  background: #fbfcfe;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+
+  &:focus-within {
+    border-color: #3980f6;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(57, 128, 246, 0.1);
+  }
+
+  input {
+    width: 100%;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #17243a;
+    font: inherit;
+    font-size: 13px;
+
+    &::placeholder {
+      color: #a0aaba;
+    }
+  }
+}
+
+.inputIcon {
+  flex-shrink: 0;
+  color: #8b98ab;
+}
+
+.passwordToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border: none;
+  background: transparent;
+  color: #8b98ab;
+  cursor: pointer;
+
+  &:hover {
+    color: #2878f0;
+  }
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: fit-content;
+  color: #536078;
+  font-size: 12px;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  input:focus-visible + .customCheckbox {
+    outline: 2px solid #2878f0;
+    outline-offset: 3px;
+  }
+
+  input:checked + .customCheckbox {
+    background: #2878f0;
+    border-color: #2878f0;
+    color: #ffffff;
+  }
+}
+
+.customCheckbox {
+  width: 17px;
+  height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d5dce7;
+  border-radius: 5px;
+  color: transparent;
+  background: #ffffff;
+  transition: 0.2s;
+}
+
+.submitButton {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(110deg, #347ff4, #205dd9);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(40, 105, 230, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(40, 105, 230, 0.28);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin: 1px 0;
+
+  span {
+    flex: 1;
+    height: 1px;
+    background: #e9edf3;
+  }
+
+  p {
+    margin: 0;
+    color: #929daf;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+}
+
+.socialButton {
+  min-height: 49px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  margin-top: -7px;
+  border: 1px solid #e1e7f0;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #344158;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+
+  &:hover {
+    background: #f7f9fc;
+    border-color: #cbd6e6;
+  }
+}
+
+.googleIcon {
+  color: #4285f4;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.appleIcon {
+  color: #17243a;
+  font-size: 15px;
+}
+
+.registerText {
+  margin: 0;
+  color: #7a8597;
+  font-size: 12px;
+  text-align: center;
+
+  a {
+    margin-left: 5px;
+    color: #2878f0;
+    font-weight: 750;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 28px 20px;
+    border-radius: 19px;
+  }
+
+  .cardHeader h2 {
+    font-size: 23px;
+  }
+
+  .form {
+    gap: 17px;
+  }
+}

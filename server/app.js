@@ -8,6 +8,7 @@ import morgan from 'morgan'
 import registerRouter from "./routes/registerRoute.js";
 import loginRouter from "./routes/loginRoute.js";
 import googleRouter from "./routes/googleAuthRoute.js";
+import getUserProfileRouter from "./routes/getProfileRoute.js";
 
 const app = express();
 dotenv.config();
@@ -30,7 +31,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use(registerRouter)
 app.use(loginRouter);
 app.use(googleRouter);
-
+app.use(getUserProfileRouter)
 
 
 app.get("/", (req, res) => {

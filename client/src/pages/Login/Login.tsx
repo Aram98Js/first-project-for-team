@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import styles from "./login.module.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Mail,
   LockKeyhole,
@@ -37,7 +37,7 @@ const [errors,setErrors] = useState<{
 email: "",
 password:""
 })
-
+const navigate = useNavigate()
 
 
   const  handleSubmit = async (evt: React.FormEvent<HTMLFormElement>)=> {
@@ -47,20 +47,19 @@ password:""
         password:""
     }
    evt.preventDefault()
-   if(!loginFormData.email || !loginFormData.password) return
+if (!loginFormData.email.trim()) {
+  newErrors.email = "Email is required";
+}
 
-  if(!loginFormData.email ){
-    newErrors.email = "email is Required"
-  }     
-
-  if (!loginFormData.password) {
-    newErrors.password = "password id required";
-  }
+if (!loginFormData.password) {
+  newErrors.password = "Password is required";
+}
 
   if(newErrors.email || newErrors.password){
     setErrors(newErrors);
     return
   }
+
  const response = await fetch("http://localhost:5000/api/login",{
   method:"POST",
   headers: {
@@ -73,8 +72,21 @@ password:""
  })
 
  const data = await response.json();
- console.log(data);
- 
+ console.log(data);if (!response.ok) {
+  setErrors({
+    email: "",
+    password: data.msg || "Login failed"
+  });
+  return;
+}
+
+ if(response.ok){
+  localStorage.setItem("accessToken",data.accessToken)
+  localStorage.setItem("refreshToken",data.refreshToken)
+ }
+
+ setErrors({ email: "", password: "" });
+navigate("/profile")
   }
 
 
@@ -117,11 +129,14 @@ password:""
               onChange={handleChange}
               autoComplete="email"
               name="email"
-              required
+              
             />
 
-            {errors && <span>{errors.email}</span>}
-          </div>
+
+          </div>            {errors.email && (
+  <span className={styles.error}>{errors.email}</span>
+)}
+
         </div>
 
         <div className={styles.field}>
@@ -143,7 +158,6 @@ password:""
               value={loginFormData.password}
               onChange={handleChange}
               autoComplete="current-password"
-              required
               name="password"
             />
 
@@ -156,8 +170,11 @@ password:""
               {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
             </Button>
 
-            {errors && <span>{errors.password}</span>}
+          
           </div>
+           {errors.password && (
+  <span className={styles.error}>{errors.password}</span>
+)}
         </div>
 
         <label className={styles.remember}>

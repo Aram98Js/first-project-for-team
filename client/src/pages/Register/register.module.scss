@@ -83,7 +83,12 @@
     border-color 0.25s ease,
     box-shadow 0.25s ease,
     background 0.25s ease;
-
+   .error {
+  color: #e53935;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
   &:hover {
     border-color: #c4d0dc;
   }
@@ -116,11 +121,8 @@
       opacity: 1;
     }
   }
+ 
 
-  select {
-    cursor: pointer;
-    appearance: auto;
-  }
 }
 
 .inputIcon {
@@ -176,15 +178,22 @@
   color: #8a98a7;
   font-size: 10px;
   line-height: 1.4;
+    .error {
+  color: #e53935;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
 }
-
 .fieldHint {
-  margin-top: -10px;
+  
   padding-left: 3px;
 
   color: #8a98a7;
   font-size: 10px;
 }
+}
+
+
 
 .terms {
   display: flex;

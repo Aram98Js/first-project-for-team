@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from './register.module.scss'
 import Button from "../../components/Ui/Button";
 import {
@@ -37,8 +37,10 @@ const Register = ()=> {
     phoneNumber:"",
     country:""
   })
-
-
+const navigate = useNavigate()
+const [errors, setErrors] = useState<
+  { path: string; msg: string }[]
+>([]);
   const handleSumbit = async(evt: React.FormEvent<HTMLFormElement>)=>{
         evt.preventDefault()
     try {
@@ -58,7 +60,18 @@ const Register = ()=> {
       })
 
       const data = await response.json();
-      console.log(data);
+
+
+ if (!response.ok) {
+  setErrors(
+    data.errors || [
+      { path: "general", msg: data.msg || "Something went wrong" }
+    ]
+  );
+  return;
+}
+    setErrors([]);
+      navigate("/login")
       
     } catch (error) {
       console.error(error)
@@ -102,7 +115,7 @@ const Register = ()=> {
               placeholder="Full name"
               autoComplete="name"
               name="username"
-              required
+            
             />
           </label>
 
@@ -118,14 +131,34 @@ const Register = ()=> {
               placeholder="Email address"
               autoComplete="email"
               name="email"
-              required
+             
             />
+  
           </label>
         </div>
 
         <div className={styles.hintRow}>
-          <span>e.g. Mariam Hakobyan</span>
-          <span>e.g. mariam@example.com</span>
+         {errors.find((error) => error.path === "username") ? (
+  <span className={styles.error}>
+    {errors.find((error) => error.path === "username")?.msg}
+  </span>
+) : (
+  <span className={styles.fieldHint}>
+    e.g. Mariam Hakobyan
+  </span>
+)}
+
+
+
+                   {errors.find((error) => error.path === "email") ? (
+  <span className={styles.error}>
+    {errors.find((error) => error.path === "email")?.msg}
+  </span>
+) : (
+  <span className={styles.fieldHint}>
+    e.g. mariamhakobyan@gmail.com
+  </span>
+)}
         </div>
 
         <label className={styles.field}>
@@ -141,7 +174,7 @@ const Register = ()=> {
             autoComplete="new-password"
             minLength={8}
             name="password"
-            required
+            
           />
 
           <button
@@ -152,11 +185,23 @@ const Register = ()=> {
           >
             {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
           </button>
-        </label>
 
-        <span className={styles.fieldHint}>
-          At least 8 characters
-        </span>
+
+                        
+        </label>
+<div  className={styles.hintRow}>
+    {errors.find((error) => error.path === "password") ? (
+  <span className={styles.error}>
+    {errors.find((error) => error.path === "password")?.msg}
+  </span>
+) : (
+  <span className={styles.fieldHint}>
+  *
+  </span>
+)}
+</div>
+        
+ 
 
         <label className={styles.field}>
           <span className={styles.inputIcon}>
@@ -164,13 +209,14 @@ const Register = ()=> {
           </span>
 
           <input
+          onChange={handleChange}
             value={registerFormData.confirmPassword}
             type={showConfirmPassword ? "text" : "password"}
             placeholder="Confirm password"
             autoComplete="new-password"
             minLength={8}
             name="confirmPassword"
-            required
+            
           />
 
           <button
@@ -190,7 +236,13 @@ const Register = ()=> {
             )}
           </button>
         </label>
-
+  <div className = {styles.hintRow}>
+    {errors.find((error) => error.path === "confirmPassword") && (
+  <span className={styles.error}>
+    {errors.find((error) => error.path === "confirmPassword")?.msg}
+  </span>
+)}
+  </div>
         <div className={styles.fieldRow}>
           <label className={styles.field}>
             <span className={styles.inputIcon}>
@@ -200,15 +252,27 @@ const Register = ()=> {
 
             <input
               type="text"
+              onChange={handleChange}
+                 value={registerFormData.country}
               placeholder="Country"
               autoComplete="country"
               name="country"
-              required
+              
             />
      
 
           </label>
-
+<div  className={styles.hintRow}>
+    {errors.find((error) => error.path === "country") ? (
+  <span className={styles.error}>
+    {errors.find((error) => error.path === "country")?.msg}
+  </span>
+) : (
+  <span className={styles.fieldHint}>
+  *
+  </span>
+)}
+</div>
           <label className={styles.field}>
             <span className={styles.inputIcon}>
               <Phone size={17} />
@@ -222,11 +286,23 @@ const Register = ()=> {
               autoComplete="tel"
               name="phoneNumber"
             />
+            
           </label>
+          <div  className={styles.hintRow}>
+    {errors.find((error) => error.path === "phoneNumber") ? (
+  <span className={styles.error}>
+    {errors.find((error) => error.path === "phoneNumber")?.msg}
+  </span>
+) : (
+  <span className={styles.fieldHint}>
+  *
+  </span>
+)}
+</div>
         </div>
 
         <label className={styles.terms}>
-          <input type="checkbox" required />
+          <input type="checkbox"  />
 
           <span className={styles.checkIcon}>
             <Check size={12} />

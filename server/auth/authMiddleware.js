@@ -1,42 +1,38 @@
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
+function authMiddleware(req, res, next) {
+  try {
+    const authHeader = req.headers.authorization;
 
-function authMiddleware(req,res,next){
-
-
-    try {
-const authHeader = req.headers.authorization;
-if(!authHeader){
-     return res.status(401).json({
-            msg:"Authorization header missing"
-        });
-}
-const [token,type] = authHeader.split(" ")
-if(!token && type !== "Bearer"){
-    return res.status(401).json({
-         msg:"Token missing"
-    })
-}
-
-const decoded = jwt.verify(
-    token,
-    process.env.SECRET
-)
-req.user = decoded;
-    console.log("DECODED:", decoded);
-next()        
-    } catch (error) {
-    
-        console.log(error);
-
-    return res.status(401).json({
-        msg:"Invalid token"
-    });
-      
+    if (!authHeader) {
+      return res.status(401).json({
+        msg: "Authorization header missing"
+      });
     }
 
+    const [type, token] = authHeader.split(" ");
+
+    if (type !== "Bearer" || !token) {
+      return res.status(401).json({
+        msg: "Invalid authorization format"
+      });
+    }
+
+    const decoded = jwt.verify(
+      token,
+      process.env.SECRET
+    );
+
+    req.user = decoded;
+
+    next();
+  } catch (error) {
+    console.log(error.name);
+
+    return res.status(401).json({
+      msg: "Invalid or expired token"
+    });
+  }
 }
 
-
-export default authMiddleware
-
+export default authMiddleware;

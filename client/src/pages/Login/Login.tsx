@@ -23,11 +23,11 @@ interface LoginForm{
 
 
 const Login = ()=> {
-
-  const [rememberMe, setRememberMe] = useState(true);
+const rememberedEmail = localStorage.getItem("rememberedEmail")
+  const [rememberMe, setRememberMe] = useState<boolean>(!!rememberedEmail);
   const [showPassword, setShowPassword] = useState(false);
 const [loginFormData,setLoginFormData] = useState<LoginForm>({
-    email: "",
+    email: localStorage.getItem("rememberedEmail") ||  "",
     password: ""
 })
 
@@ -80,6 +80,12 @@ if (!loginFormData.password) {
     password: data.msg || "Login failed"
   });
   return;
+}
+
+if (rememberMe) {
+  localStorage.setItem("rememberedEmail",loginFormData.email)
+}else{
+  localStorage.removeItem("rememberedEmail")
 }
 
  if(response.ok){
@@ -249,10 +255,7 @@ const handleGoogleLogin = async(credentialResponse:CredentialResponse)=>{
   }}
 />
 
-        <button type="button" className={styles.socialButton}>
-          <span className={styles.appleIcon}>●</span>
-          Continue with Apple
-        </button>
+        
 
         <p className={styles.registerText}>
           Don't have an account?

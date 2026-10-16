@@ -1,25 +1,24 @@
 import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import {
+  ArrowLeft,
+  ArrowRight,
   UserRound,
- 
-  Settings,
-  LockKeyhole,
-  ChevronRight,
-  LogOut,
-  Upload,
-  ImageIcon,
-  Compass,
-  BriefcaseBusiness,
-  Heart,
-  Plane,
-  MapPin,
-  Phone,
   Mail,
+  Phone,
+  MapPin,
+  ShieldCheck,
+  Pencil,
+  LogOut,
+  Plane,
+  Camera,
+  Compass,
+  LockKeyhole,
 } from "lucide-react";
-import styles from "./profile.module.scss";
-import { useNavigate } from "react-router-dom";
 
-type User = {
+import styles from "./profile.module.scss";
+
+type ProfileUser = {
   _id: string;
   username: string;
   email: string;
@@ -27,22 +26,25 @@ type User = {
   country?: string;
   image?: string;
   role?: string;
+  createdAt?: string;
 };
 
-
-
 function Profile() {
-  const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState<ProfileUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-const navigate = useNavigate()
+
   useEffect(() => {
+    const controller = new AbortController();
+
     const getProfile = async () => {
       try {
         const token = localStorage.getItem("accessToken");
 
         if (!token) {
-          setError("Please log in to view your profile.");
+          navigate("/login", { replace: true });
           return;
         }
 
@@ -52,8 +54,14 @@ const navigate = useNavigate()
             headers: {
               Authorization: `Bearer ${token}`,
             },
+            signal: controller.signal,
           }
         );
+
+        if (response.status === 401) {
+          navigate("/login", { replace: true });
+          return;
+        }
 
         const data = await response.json();
 
@@ -62,164 +70,208 @@ const navigate = useNavigate()
         }
 
         setUser(data.user);
-      } catch (error) {
+      } catch (err) {
+        if (controller.signal.aborted) return;
+
         setError(
-          error instanceof Error ? error.message : "Something went wrong"
+          err instanceof Error ? err.message : "Something went wrong"
         );
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     getProfile();
-  }, []);
+
+    return () => controller.abort();
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    navigate("/login", { replace: true });
+  };
 
   if (loading) {
-    return <div className={styles.message}>Loading profile...</div>;
+    return <div className={styles.status}>Loading your profile...</div>;
   }
 
   if (error) {
-    return <div className={styles.message}>{error}</div>;
+    return <div className={styles.status}>{error}</div>;
   }
 
   if (!user) return null;
 
-
-const logOut = ()=>{
- localStorage.removeItem("accessToken");
- localStorage.removeItem("refreshToken");
- navigate("/login")
-}
   return (
-    <div className={styles.dashboardGrid}>
-  <div className={styles.mainColumn}>
-    <section className={styles.dashboardCard}>
-      <div className={styles.sectionTitle}>
-        <div className={styles.sectionIcon}>
-          <UserRound size={21} />
-        </div>
-        <div>
-          <h3>Personal Information</h3>
-          <p>Keep your personal details up to date.</p>
-        </div>
-      </div>
+    <main className={styles.profilePage}>
+      <div className={styles.container}>
+        <header className={styles.header}>
+          <Link to="/" className={styles.backLink}>
+            <ArrowLeft size={18} />
+            Back to Home
+          </Link>
 
-      <div className={styles.detailsGrid}>
-        <div className={styles.detailItem}>
-          <UserRound size={20} />
-          <div>
-            <span>Full Name</span>
-            <strong>{user.username}</strong>
+          <div className={styles.brand}>
+            <Plane size={23} />
+            <span>
+              Trip<span className={styles.brandAccent}>Genius</span>
+            </span>
           </div>
-        </div>
 
-        <div className={styles.detailItem}>
-          <Mail size={20} />
-          <div>
-            <span>Email Address</span>
-            <strong>{user.email}</strong>
+          <button
+            type="button"
+            className={styles.logoutTop}
+            onClick={handleLogout}
+          >
+            <LogOut size={17} />
+            Log Out
+          </button>
+        </header>
+
+        <section className={styles.hero}>
+          <div className={styles.heroOverlay}>
+            <span className={styles.eyebrow}>
+              YOUR JOURNEY STARTS HERE
+            </span>
+
+            <h1>
+              Every journey
+              <br />
+              tells a <em>story.</em>
+            </h1>
+
+            <p>
+              Your world, your adventures, your personal space.
+            </p>
           </div>
-        </div>
+        </section>
 
-        <div className={styles.detailItem}>
-          <Phone size={20} />
-          <div>
-            <span>Phone Number</span>
-            <strong>{user.phoneNumber || "Not provided"}</strong>
+        <section className={styles.identity}>
+          <div className={styles.avatar}>
+            {user.image ? (
+              <img src={user.image} alt="Profile avatar" />
+            ) : (
+              <UserRound size={46} />
+            )}
+
+            <span className={styles.cameraIcon}>
+              <Camera size={15} />
+            </span>
           </div>
-        </div>
 
-        <div className={styles.detailItem}>
-          <MapPin size={20} />
-          <div>
-            <span>Country</span>
-            <strong>{user.country || "Not provided"}</strong>
+          <div className={styles.identityText}>
+            <span className={styles.smallLabel}>TRIPGENIUS MEMBER</span>
+            <h2>{user.username}</h2>
+            <p>{user.email}</p>
           </div>
+
+          <span className={styles.role}>
+            <ShieldCheck size={15} />
+            {user.role || "user"}
+          </span>
+        </section>
+
+        <div className={styles.contentGrid}>
+          <section className={styles.information}>
+            <div className={styles.sectionHeading}>
+              <div>
+                <span className={styles.smallLabel}>ABOUT YOU</span>
+                <h2>Personal Information</h2>
+                <p>
+                  Your personal details, all in one place.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className={styles.editButton}
+                disabled
+                title="Editing will be available soon"
+              >
+                <Pencil size={16} />
+                Edit Profile
+              </button>
+            </div>
+
+            <div className={styles.details}>
+              <div className={styles.detail}>
+                <UserRound size={19} />
+                <div>
+                  <span>Full Name</span>
+                  <strong>{user.username}</strong>
+                </div>
+              </div>
+
+              <div className={styles.detail}>
+                <Mail size={19} />
+                <div>
+                  <span>Email Address</span>
+                  <strong>{user.email}</strong>
+                </div>
+              </div>
+
+              <div className={styles.detail}>
+                <Phone size={19} />
+                <div>
+                  <span>Phone Number</span>
+                  <strong>{user.phoneNumber || "Not provided"}</strong>
+                </div>
+              </div>
+
+              <div className={styles.detail}>
+                <MapPin size={19} />
+                <div>
+                  <span>Country</span>
+                  <strong>{user.country || "Not provided"}</strong>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <aside className={styles.sidebar}>
+            <div className={styles.travelCard}>
+              <div className={styles.travelIcon}>
+                <Compass size={25} />
+              </div>
+
+              <span className={styles.smallLabel}>THE WORLD AWAITS</span>
+
+              <h3>
+                Where to
+                <br />
+                next?
+              </h3>
+
+              <p>
+                Beautiful places and unforgettable experiences
+                are waiting to be discovered.
+              </p>
+
+              <Link to="/" className={styles.exploreButton}>
+                Explore Destinations
+                <ArrowRight size={17} />
+              </Link>
+            </div>
+
+            <div className={styles.securityCard}>
+              <LockKeyhole size={20} />
+              <div>
+                <h4>Account Security</h4>
+                <p>Keep your travel account protected.</p>
+              </div>
+              <ShieldCheck size={19} className={styles.securityCheck} />
+            </div>
+          </aside>
         </div>
+
+        <footer className={styles.footer}>
+          <span>© TripGenius — Explore beyond boundaries.</span>
+          <span>Made for curious travelers.</span>
+        </footer>
       </div>
-    </section>
-
-    <section className={styles.dashboardCard}>
-      <div className={styles.sectionTitle}>
-        <div className={styles.sectionIcon}>
-          <Plane size={21} />
-        </div>
-        <div>
-          <h3>Travel Preferences</h3>
-          <p>Tell us more about your travel style.</p>
-        </div>
-      </div>
-
-      <div className={styles.preferencesGrid}>
-        <div className={styles.preferenceItem}>
-          <Heart size={21} />
-          <span>Favorite Destinations</span>
-          <strong>Not set yet</strong>
-        </div>
-
-        <div className={styles.preferenceItem}>
-          <BriefcaseBusiness size={21} />
-          <span>Travel Style</span>
-          <strong>Not set yet</strong>
-        </div>
-
-        <div className={styles.preferenceItem}>
-          <Compass size={21} />
-          <span>Interests</span>
-          <strong>Not set yet</strong>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <aside className={styles.sideColumn}>
-    <section className={styles.dashboardCard}>
-      <div className={styles.sectionTitle}>
-        <div className={styles.sectionIcon}>
-          <ImageIcon size={21} />
-        </div>
-        <div>
-          <h3>Profile Picture</h3>
-          <p>Update your profile picture.</p>
-        </div>
-      </div>
-
-      <div className={styles.uploadArea}>
-        <Upload size={25} />
-        <strong>Upload your photo</strong>
-        <span>JPG, PNG or WebP (Max 5MB)</span>
-        <small>Image upload coming soon</small>
-      </div>
-    </section>
-
-    <section className={styles.dashboardCard}>
-      <div className={styles.sectionTitle}>
-        <div className={styles.sectionIcon}>
-          <Settings size={21} />
-        </div>
-        <div>
-          <h3>Account Actions</h3>
-          <p>Manage your account and security.</p>
-        </div>
-      </div>
-
-      <button className={styles.actionButton} type="button" disabled>
-        <LockKeyhole size={18} />
-        Change Password
-        <ChevronRight size={17} />
-      </button>
-
-      <button
-        className={styles.logoutButton}
-        type="button"
-        onClick={logOut}
-      >
-        <LogOut size={18} />
-        Log Out
-      </button>
-    </section>
-  </aside>
-</div>
+    </main>
   );
 }
 

@@ -342,7 +342,15 @@ const [errors, setErrors] = useState<
           );
         
           const data = await result.json();
-          console.log(data);
+         if (!result.ok) {
+        console.error(data.msg || "Google login failed");
+        return;
+      }
+
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+
+      navigate("/profile");
           }}
           onError={() => {
             console.log("Google Login Failed");

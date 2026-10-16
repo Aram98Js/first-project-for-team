@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import Button from "../../components/Ui/Button";
 import { GoogleLogin } from "@react-oauth/google";
+import type { CredentialResponse } from "@react-oauth/google";
 interface LoginForm{
     email:string,
     password: string;
@@ -72,7 +73,8 @@ if (!loginFormData.password) {
  })
 
  const data = await response.json();
- console.log(data);if (!response.ok) {
+ console.log(data)
+ ;if (!response.ok) {
   setErrors({
     email: "",
     password: data.msg || "Login failed"
@@ -96,6 +98,39 @@ navigate("/profile")
         [evt.target.name]: evt.target.value
     })
   }
+
+const handleGoogleLogin = async(credentialResponse:CredentialResponse)=>{
+
+
+  try {
+   const response = await fetch("http://localhost:5000/api/auth/google",{
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body:JSON.stringify({
+      credential: credentialResponse.credential,
+    })
+   }) 
+
+   const data = await response.json()
+   if(!response.ok){
+        throw new Error(data.msg || "Google login failed");
+   }
+
+         localStorage.setItem("accessToken", data.accessToken);
+
+      if (data.refreshToken) {
+        localStorage.setItem("refreshToken", data.refreshToken);
+      }
+          navigate("/profile");
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+
+}
 
   return (
     <div className={styles.card}>
@@ -208,23 +243,7 @@ navigate("/profile")
         </button> */}
 
         <GoogleLogin
-  onSuccess={async(response) => {
-    const credential = response.credential;
-
-  const result = await fetch(
-    "http://localhost:5000/api/auth/google",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ credential }),
-    }
-  );
-
-  const data = await result.json();
-  console.log(data);
-  }}
+  onSuccess={handleGoogleLogin}
   onError={() => {
     console.log("Google Login Failed");
   }}

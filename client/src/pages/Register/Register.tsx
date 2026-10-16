@@ -309,8 +309,8 @@ const [errors, setErrors] = useState<
           </span>
 
           <span>
-            I agree to the <a href="#terms">Terms of Service</a> and{" "}
-            <a href="#privacy">Privacy Policy</a>
+            I agree to the <Link to="/terms">Terms of Service</Link> and{" "}
+            <Link to="/privacy">Privacy Policy</Link>
           </span>
         </label>
 

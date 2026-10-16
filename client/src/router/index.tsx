@@ -5,6 +5,7 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import AuthLayout from "../components/AuthLayout";
 import Profile from "../pages/Profile/Profile";
+import TermsOfService from "../pages/Terms/Terms";
 
 
 const router = createBrowserRouter([
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
     {
       path:"/profile",
       element: <Profile />
+    },
+    {
+      path: "/terms",
+      element: <TermsOfService />
     }
 
 ])

@@ -6,6 +6,8 @@ import Register from "../pages/Register/Register";
 import AuthLayout from "../components/AuthLayout";
 import Profile from "../pages/Profile/Profile";
 import TermsOfService from "../pages/Terms/Terms";
+import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword/ResetPassword";
 
 
 const router = createBrowserRouter([
@@ -36,7 +38,17 @@ element: ""
     {
       path: "/terms",
       element: <TermsOfService />
+    },
+    {
+      path:"/forgotPassword",
+      element: <ForgotPassword />
+    },
+
+    {
+    path:"/reset-password/:token",
+    element:<ResetPassword />
     }
+
 
 ])
 

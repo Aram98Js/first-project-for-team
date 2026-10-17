@@ -184,7 +184,7 @@ const handleGoogleLogin = async(credentialResponse:CredentialResponse)=>{
           <div className={styles.labelRow}>
             <label htmlFor="password">Password</label>
 
-            <Link to="/forgot-password" className={styles.forgotLink}>
+            <Link to="/forgotPassword" className={styles.forgotLink}>
               Forgot password?
             </Link>
           </div>

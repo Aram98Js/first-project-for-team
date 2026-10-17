@@ -9,6 +9,7 @@ import registerRouter from "./routes/registerRoute.js";
 import loginRouter from "./routes/loginRoute.js";
 import googleRouter from "./routes/googleAuthRoute.js";
 import getUserProfileRouter from "./routes/getProfileRoute.js";
+import forgotPasswordRouter from "./routes/forgotPasswordRoute.js";
 
 const app = express();
 dotenv.config();
@@ -32,6 +33,7 @@ app.use(registerRouter)
 app.use(loginRouter);
 app.use(googleRouter);
 app.use(getUserProfileRouter)
+app.use(forgotPasswordRouter)
 
 
 app.get("/", (req, res) => {

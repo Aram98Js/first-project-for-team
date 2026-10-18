@@ -8,6 +8,7 @@ import Profile from "../pages/Profile/Profile";
 import TermsOfService from "../pages/Terms/Terms";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword/ResetPassword";
+import PrivacyPolicy from "../pages/Privacy/Privacy";
 
 
 const router = createBrowserRouter([
@@ -47,7 +48,12 @@ element: ""
     {
     path:"/reset-password/:token",
     element:<ResetPassword />
-    }
+    },
+    {
+      path: "/privacy-policy",
+      element: <PrivacyPolicy />
+    },
+    
 
 
 ])

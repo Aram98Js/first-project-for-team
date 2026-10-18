@@ -1,1 +1,30 @@
+.tg_privacy {
+  .tg_privacy_sidebar {
+    > .tg_privacy_sidebar_link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 12px;
+      border-radius: 10px;
+      color: #596776;
+      font-size: 12px;
+      line-height: 1.5;
+      transition: background 0.25s, color 0.25s;
 
+      span {
+        color: #bf925b;
+        font-size: 11px;
+      }
+
+      &:hover,
+      &.active {
+        background: #f4e9d9;
+        color: #14283c;
+      }
+    }
+  }
+
+  .active {
+    font-weight: 700;
+  }
+}

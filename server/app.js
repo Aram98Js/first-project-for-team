@@ -1,4 +1,4 @@
-
+import tripRouter from "./routes/tripRoute.js";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -26,6 +26,7 @@ app.use(bodyParser.json());
 app.use(morgan("dev"))
 app.use(bodyParser.urlencoded({extended: true}))
 
+app.use("/api/trip", tripRouter);
 
 //api routes for pages
 

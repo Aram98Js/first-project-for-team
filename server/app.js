@@ -1,4 +1,4 @@
-import tripRouter from "./routes/tripRoute.js";
+import  { createTripRouter, getMyTripsRouter, getTripRouter } from "./routes/tripRoute.js";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 app.use(morgan("dev"))
 app.use(bodyParser.urlencoded({extended: true}))
 
-app.use("/api/trip", tripRouter);
+
 
 //api routes for pages
 
@@ -35,6 +35,10 @@ app.use(loginRouter);
 app.use(googleRouter);
 app.use(getUserProfileRouter)
 app.use(forgotPasswordRouter)
+app.use(createTripRouter);
+app.use(getTripRouter);
+app.use(getMyTripsRouter);
+
 
 
 app.get("/", (req, res) => {

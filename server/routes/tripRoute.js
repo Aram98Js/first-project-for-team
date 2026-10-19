@@ -2,10 +2,12 @@ import express from "express";
 import authMiddleware from "../auth/authMiddleware.js";
 import { createTrip, getMyTrips, getTripById } from "../controller/tripController.js";
 
-const router = express.Router();
+const createTripRouter = express.Router();
+const getMyTripsRouter = express.Router();
+const getTripRouter = express.Router();
 
-router.post("/", authMiddleware, createTrip);
-router.get("/", authMiddleware, getMyTrips);
-router.get("/:id", authMiddleware, getTripById);
+createTripRouter.post("/api/createTrip", authMiddleware, createTrip);
+getMyTripsRouter.get("/api/getMyTrip", authMiddleware, getMyTrips);
+getTripRouter.get("/api/getTrip/:id", authMiddleware, getTripById);
 
-export default router;
+export{createTripRouter,getTripRouter,getMyTripsRouter};

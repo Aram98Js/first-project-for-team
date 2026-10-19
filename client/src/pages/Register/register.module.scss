@@ -59,7 +59,7 @@
 
 .fieldRow {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(1, 1fr);
   gap: 12px;
 }
 
@@ -197,6 +197,7 @@
 
 .terms {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   gap: 10px;
 
@@ -311,6 +312,13 @@
   &:hover svg {
     transform: translateX(3px);
   }
+  &:disabled{
+      &:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  }
 }
 
 .divider {
@@ -336,7 +344,7 @@
 
 .socialButtons {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: 12px;
 }
 

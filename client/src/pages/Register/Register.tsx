@@ -29,6 +29,8 @@ interface RegisterFormData{
 const Register = ()=> {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [checkBoxed,setCheckBoxed] = useState<boolean>(false);
+  const [termsError, setTermsError] = useState<string>("");
   const [registerFormData,setRegisterFormData] = useState<RegisterFormData>({
     username:"",
     email:"",
@@ -43,6 +45,12 @@ const [errors, setErrors] = useState<
 >([]);
   const handleSumbit = async(evt: React.FormEvent<HTMLFormElement>)=>{
         evt.preventDefault()
+
+        if(!checkBoxed){
+setTermsError("You must agree to the Terms of Service and Privacy Policy");
+return
+        }
+         setTermsError("");
     try {
       const response = await fetch("http://localhost:5000/api/register",{
         method:"POST",
@@ -269,7 +277,7 @@ const [errors, setErrors] = useState<
   </span>
 ) : (
   <span className={styles.fieldHint}>
-  *
+  
   </span>
 )}
 </div>
@@ -295,14 +303,14 @@ const [errors, setErrors] = useState<
   </span>
 ) : (
   <span className={styles.fieldHint}>
-  *
+  
   </span>
 )}
 </div>
         </div>
 
         <label className={styles.terms}>
-          <input type="checkbox"  />
+          <input type="checkbox" checked={checkBoxed} onChange={(evt:React.ChangeEvent<HTMLInputElement>)=>setCheckBoxed(evt.target.checked)} />
 
           <span className={styles.checkIcon}>
             <Check size={12} />
@@ -310,14 +318,15 @@ const [errors, setErrors] = useState<
 
           <span>
             I agree to the <Link to="/terms">Terms of Service</Link> and{" "}
-            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/privacy-policy">Privacy Policy</Link>
           </span>
+          {termsError && <p className={styles.error}>{termsError}</p>}
         </label>
 
-        <button type="submit" className={styles.createButton}>
+        <Button type="submit" className={styles.createButton}>
           Create Account
           <ArrowRight size={17} />
-        </button>
+        </Button>
 
         <div className={styles.divider}>
           <span />
@@ -357,10 +366,7 @@ const [errors, setErrors] = useState<
           }}
         />
 
-          <Button onClick={()=>alert("hello")} className={styles.socialButton}>
-            <span className={styles.appleIcon}>●</span>
-            Apple
-          </Button>
+         
         </div>
 
         <p className={styles.loginText}>

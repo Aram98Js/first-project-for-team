@@ -9,6 +9,7 @@ import TermsOfService from "../pages/Terms/Terms";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword/ResetPassword";
 import PrivacyPolicy from "../pages/Privacy/Privacy";
+import CreateTrip from "../pages/CreateTrip/CreateTrip";
 
 
 const router = createBrowserRouter([
@@ -53,6 +54,10 @@ element: ""
       path: "/privacy-policy",
       element: <PrivacyPolicy />
     },
+    {
+      path: "/create-trip",
+      element: <CreateTrip/>
+    }
     
 
 

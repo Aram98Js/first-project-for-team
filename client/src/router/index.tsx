@@ -10,6 +10,7 @@ import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword/ResetPassword";
 import PrivacyPolicy from "../pages/Privacy/Privacy";
 import CreateTrip from "../pages/CreateTrip/CreateTrip";
+import OtpVerification from "../pages/OtpVerification/OtpVerification";
 
 
 const router = createBrowserRouter([
@@ -57,6 +58,11 @@ element: ""
     {
       path: "/create-trip",
       element: <CreateTrip/>
+    },
+    {
+      path:"/otp-verification",
+      element: <OtpVerification />
+
     }
     
 

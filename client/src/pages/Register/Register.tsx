@@ -79,7 +79,13 @@ return
   return;
 }
     setErrors([]);
-      navigate("/login")
+   if (response.ok && data.requiresVerification) {
+  navigate("/verify-email", {
+    state: {
+      email: data.email
+    }
+  });
+}
       
     } catch (error) {
       console.error(error)

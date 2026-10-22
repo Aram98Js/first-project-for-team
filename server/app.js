@@ -10,6 +10,8 @@ import loginRouter from "./routes/loginRoute.js";
 import googleRouter from "./routes/googleAuthRoute.js";
 import getUserProfileRouter from "./routes/getProfileRoute.js";
 import forgotPasswordRouter from "./routes/forgotPasswordRoute.js";
+import verifyRouter from "./routes/verificationRoute.js";
+import resendOtpRouter from "./routes/resendOtpRoute.js";
 
 const app = express();
 dotenv.config();
@@ -38,12 +40,10 @@ app.use(forgotPasswordRouter)
 app.use(createTripRouter);
 app.use(getTripRouter);
 app.use(getMyTripsRouter);
+app.use(verifyRouter)
+app.use(resendOtpRouter)
 
 
-
-app.get("/", (req, res) => {
-    res.send("Hello, World!");
-})
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

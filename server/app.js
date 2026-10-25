@@ -1,4 +1,4 @@
-import tripRouter from "./routes/tripRoute.js";
+import  { createTripRouter, getMyTripsRouter, getTripRouter } from "./routes/tripRoute.js";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -10,6 +10,8 @@ import loginRouter from "./routes/loginRoute.js";
 import googleRouter from "./routes/googleAuthRoute.js";
 import getUserProfileRouter from "./routes/getProfileRoute.js";
 import forgotPasswordRouter from "./routes/forgotPasswordRoute.js";
+import verifyRouter from "./routes/verificationRoute.js";
+import resendOtpRouter from "./routes/resendOtpRoute.js";
 
 const app = express();
 dotenv.config();
@@ -26,7 +28,7 @@ app.use(bodyParser.json());
 app.use(morgan("dev"))
 app.use(bodyParser.urlencoded({extended: true}))
 
-app.use("/api/trip", tripRouter);
+
 
 //api routes for pages
 
@@ -35,11 +37,13 @@ app.use(loginRouter);
 app.use(googleRouter);
 app.use(getUserProfileRouter)
 app.use(forgotPasswordRouter)
+app.use(createTripRouter);
+app.use(getTripRouter);
+app.use(getMyTripsRouter);
+app.use(verifyRouter)
+app.use(resendOtpRouter)
 
 
-app.get("/", (req, res) => {
-    res.send("Hello, World!");
-})
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

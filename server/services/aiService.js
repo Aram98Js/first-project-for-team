@@ -167,7 +167,23 @@ export async function generateTripPlan(q) {
     return buildMockPlan(q);
   }
 
+<<<<<<< HEAD
   const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
+=======
+  const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+
+  const prompt = `Составь план путешествия.
+Направление: ${q.destination}
+Дней: ${q.days}
+Бюджет: ${q.budget}
+Путешественников: ${q.travelers}
+Интересы: ${(q.interests || []).join(", ") || "не указаны"}
+Темп: ${q.pace}
+
+Верни ТОЛЬКО JSON-массив в формате:
+[{"day":1,"title":"...","activities":[{"time":"09:00","title":"...","description":"..."}]}]
+Ровно ${q.days} дней, 4-6 активностей в день. Пиши по-русски.`;
+>>>>>>> 890732a (corrections)
 
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,

@@ -249,8 +249,8 @@ function Profile() {
                 are waiting to be discovered.
               </p>
 
-              <Link to="/" className={styles.exploreButton}>
-                Explore Destinations
+              <Link to="/create-trip" className={styles.exploreButton}>
+                Explore Destinations 
                 <ArrowRight size={17} />
               </Link>
             </div>

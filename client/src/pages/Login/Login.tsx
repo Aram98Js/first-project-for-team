@@ -74,7 +74,7 @@ if (!loginFormData.password) {
 
  const data = await response.json();
  console.log(data)
- ;if (!response.ok) {
+ if (!response.ok) {
   setErrors({
     email: "",
     password: data.msg || "Login failed"

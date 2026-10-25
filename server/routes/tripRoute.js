@@ -15,4 +15,4 @@ createTripRouter.post("/api/createTrip", authMiddleware, createTrip);
 getMyTripsRouter.get("/api/getMyTrip", authMiddleware, getMyTrips);
 getTripRouter.get("/api/getTrip/:id", authMiddleware, getTripById);
 
-export { createTripRouter, getTripRouter, getMyTripsRouter };
+export { createTripRouter, getTripRouter, getMyTripsRouter }; 

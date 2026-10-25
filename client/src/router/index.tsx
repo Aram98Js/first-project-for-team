@@ -1,4 +1,4 @@
- import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import AuthLayout from "../components/AuthLayout";
@@ -7,7 +7,7 @@ import TermsOfService from "../pages/Terms/Terms";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword/ResetPassword";
 import PrivacyPolicy from "../pages/Privacy/Privacy";
-import TripPlanner from "../TripPlanner";
+import TripPlanner from "../pages/PagesPlanner/TripPlanner";
 import CreateTrip from "../pages/CreateTrip/CreateTrip";
 import OtpVerification from "../pages/OtpVerification/OtpVerification";
 

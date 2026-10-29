@@ -12,63 +12,177 @@ const clampInt = (v, min, max, fallback) => {
 const text = (v, max = 500) => String(v ?? "").trim().slice(0, max);
 const pick = (v, allowed, fallback) => (allowed.includes(v) ? v : fallback);
 
+
 export const createTrip = async (req, res) => {
   try {
     const b = req.body || {};
 
     const country = text(b.country, 80);
     const city = text(b.city, 80);
-    const destination = [city, country].filter(Boolean).join(", ") || text(b.destination, 160);
+
+    const destination =
+      [city, country].filter(Boolean).join(", ") ||
+      text(b.destination, 160);
+
     if (!destination) {
-      return res.status(400).json({ message: "Укажи город или страну" });
+      return res.status(400).json({
+        message: "Укажи город или страну",
+      });
     }
 
     const days = clampInt(b.days, 1, 14, 0);
+
     if (!days) {
-      return res.status(400).json({ message: "Укажи количество дней от 1 до 14" });
+      return res.status(400).json({
+        message: "Укажи количество дней от 1 до 14",
+      });
     }
 
     const userId = getUserId(req);
+
     if (!userId) {
-      return res.status(401).json({ message: "Не удалось определить пользователя из токена" });
+      return res.status(401).json({
+        message: "Не удалось определить пользователя из токена",
+      });
     }
 
-    const adults = clampInt(b.adults ?? b.travelers, 1, 20, 1);
+    const adults = clampInt(
+      b.adults ?? b.travelers, 1, 20, 1
+    );
+
     const children = clampInt(b.children, 0, 20, 0);
-    const dailyBudget = Number(b.dailyBudget) > 0 ? Math.round(Number(b.dailyBudget)) : undefined;
+
+    const dailyBudget =
+      Number(b.dailyBudget) > 0
+        ? Math.round(Number(b.dailyBudget))
+        : undefined;
 
     const questionnaire = {
       destination,
       country,
       city,
       days,
-      startDate: /^\d{4}-\d{2}-\d{2}$/.test(b.startDate) ? b.startDate : "",
+      startDate: /^\d{4}-\d{2}-\d{2}$/.test(b.startDate)
+        ? b.startDate
+        : "",
       adults,
       children,
       travelers: adults + children,
-      budget: pick(b.budget, ["economy", "medium", "comfort", "luxury"], "medium"),
+      budget: pick(
+        b.budget,
+        ["economy", "medium", "comfort", "luxury"],
+        "medium"
+      ),
       dailyBudget,
-      currency: pick(b.currency, ["USD", "EUR", "AMD", "RUB", "GEL"], "USD"),
+      currency: pick(
+        b.currency,
+        ["USD", "EUR", "AMD", "RUB", "GEL"],
+        "USD"
+      ),
       interests: Array.isArray(b.interests)
-        ? b.interests.map((i) => text(i, 40)).filter(Boolean).slice(0, 20)
+        ? b.interests
+            .map((i) => text(i, 40))
+            .filter(Boolean)
+            .slice(0, 20)
         : [],
-      pace: pick(b.pace, ["relaxed", "normal", "active"], "normal"),
-      transport: pick(b.transport, ["walk", "public", "car", "taxi"], "public"),
-      diet: pick(b.diet, ["none", "vegetarian", "vegan", "halal", "kosher", "glutenfree"], "none"),
-      dayStart: pick(b.dayStart, ["early", "normal", "late"], "normal"),
+      pace: pick(
+        b.pace,
+        ["relaxed", "normal", "active"],
+        "normal"
+      ),
+      transport: pick(
+        b.transport,
+        ["walk", "public", "car", "taxi"],
+        "public"
+      ),
+      diet: pick(
+        b.diet,
+        [
+          "none",
+          "vegetarian",
+          "vegan",
+          "halal",
+          "kosher",
+          "glutenfree",
+        ],
+        "none"
+      ),
+      dayStart: pick(
+        b.dayStart,
+        ["early", "normal", "late"],
+        "normal"
+      ),
       mustSee: text(b.mustSee),
       notes: text(b.notes),
     };
 
-    const { overview, days: plan } = await generateTripPlan(questionnaire);
-    const trip = await Trip.create({ user: userId, questionnaire, overview, plan });
+    console.log("1. Questionnaire:", questionnaire);
 
-    res.status(201).json(trip);
+    let generatedPlan;
+
+    try {
+      console.log("2. Sending request to Gemini...");
+
+      generatedPlan = await generateTripPlan(questionnaire);
+
+      console.log("3. Gemini response received");
+    } catch (error) {
+      console.error("GEMINI ERROR:", error.message);
+
+      const isUnavailable =
+        /Gemini error (429|500|502|503|504)/.test(error.message);
+
+      return res.status(isUnavailable ? 503 : 502).json({
+        message: "Ошибка генерации маршрута",
+        error: isUnavailable
+          ? "AI сервис временно недоступен. Попробуйте позже."
+          : "Не удалось обработать ответ AI",
+      });
+    }
+
+    if (
+      !generatedPlan?.overview ||
+      !Array.isArray(generatedPlan.days)
+    ) {
+      return res.status(502).json({
+        message: "AI вернул некорректный план",
+      });
+    }
+
+    const { overview, days: plan } = generatedPlan;
+
+    console.log("4. Saving trip to MongoDB...");
+
+    let trip;
+
+    try {
+      trip = await Trip.create({
+        user: userId,
+        questionnaire,
+        overview,
+        plan,
+      });
+    } catch (error) {
+      console.error("MONGODB ERROR:", error);
+      throw error;
+    }
+
+    console.log("5. Trip saved:", trip._id);
+
+    return res.status(201).json(trip);
   } catch (error) {
     console.error("createTrip error:", error);
-    res.status(500).json({ message: "Не удалось создать план", error: error.message });
+
+    return res.status(500).json({
+      message: "Не удалось создать план",
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Внутренняя ошибка сервера"
+          : error.message,
+    });
   }
 };
+
 
 export const getMyTrips = async (req, res) => {
   try {

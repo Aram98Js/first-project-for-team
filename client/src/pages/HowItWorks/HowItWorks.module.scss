@@ -1,0 +1,539 @@
+
+$page-bg: #faf9f6;
+$dark: #172c39;
+$muted: #71808a;
+$gold: #c9a46c;
+$white: #fff;
+
+.page {
+  overflow: hidden;
+  background: $page-bg;
+  color: $dark;
+}
+
+.hero {
+  position: relative;
+  min-height: 680px;
+  height: 85vh;
+  max-height: 900px;
+  display: flex;
+  align-items: center;
+  background:
+    url("https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=2000&q=85")
+    center / cover no-repeat;
+  color: $white;
+}
+
+.heroOverlay,
+.ctaOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 26, 37, 0.82),
+    rgba(10, 26, 37, 0.4),
+    rgba(10, 26, 37, 0.15)
+  );
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  width: min(1200px, 90%);
+  margin: 0 auto;
+  animation: fadeUp 0.9s ease both;
+
+  h1 {
+    font-size: clamp(48px, 7vw, 100px);
+    font-weight: 700;
+    letter-spacing: -3px;
+    line-height: 1.08;
+    margin: 25px 0;
+
+    span {
+      color: #e5c48f;
+    }
+  }
+
+  p {
+    max-width: 560px;
+    font-size: 17px;
+    line-height: 1.9;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 35px;
+  }
+}
+
+.eyebrow,
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  color: #e5c48f;
+}
+
+.sectionLabel {
+  color: #b18a50;
+}
+
+.primaryButton,
+.ctaButton {
+  border: 0;
+  background: $gold;
+  color: #142633;
+  padding: 17px 30px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.3s;
+
+  span {
+    margin-left: 15px;
+    font-size: 19px;
+  }
+
+  &:hover {
+    background: #e4c38c;
+    transform: translateY(-3px);
+  }
+}
+
+.heroBottom {
+  position: absolute;
+  z-index: 1;
+  bottom: 35px;
+  left: 5%;
+  right: 5%;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.intro,
+.sectionHeading {
+  text-align: center;
+
+  h2 {
+    font-size: clamp(32px, 4vw, 56px);
+    line-height: 1.2;
+    letter-spacing: -1.5px;
+    margin: 20px 0;
+
+    span {
+      color: $gold;
+    }
+  }
+}
+
+.intro {
+  padding: 110px 20px 60px;
+
+  p {
+    max-width: 600px;
+    margin: 0 auto;
+    color: $muted;
+    line-height: 1.8;
+  }
+}
+
+.stepsSection {
+  padding: 20px 5% 120px;
+}
+
+.stepsGrid {
+  max-width: 1250px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.stepCard {
+  position: relative;
+  background: $white;
+  padding: 35px 28px;
+  min-height: 300px;
+  border: 1px solid #eee9e0;
+  border-radius: 14px;
+  transition: 0.3s;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(20, 40, 50, 0.08);
+  }
+
+  h3 {
+    font-size: 20px;
+    margin: 30px 0 14px;
+    line-height: 1.4;
+  }
+
+  p {
+    color: $muted;
+    line-height: 1.8;
+    font-size: 14px;
+  }
+}
+
+.stepTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stepNumber {
+  font-size: 42px;
+  font-weight: 800;
+  color: #f0ece5;
+}
+
+.stepIcon {
+  font-size: 30px;
+}
+
+.stepLine {
+  position: absolute;
+  bottom: 0;
+  left: 28px;
+  right: 28px;
+  height: 3px;
+  background: $gold;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: 0.3s;
+}
+
+.stepCard:hover .stepLine {
+  transform: scaleX(1);
+}
+
+.featureSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 560px;
+  background: #f0eee8;
+}
+
+.featureImage {
+  position: relative;
+  min-height: 500px;
+  background:
+    url("https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1200&q=85")
+    center / cover no-repeat;
+}
+
+.imageBadge {
+  position: absolute;
+  bottom: 35px;
+  right: -30px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px 25px;
+  border-radius: 10px;
+  background: $white;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+
+  > span {
+    font-size: 32px;
+    color: $gold;
+  }
+
+  strong,
+  small {
+    display: block;
+  }
+
+  small {
+    color: $muted;
+    margin-top: 5px;
+  }
+}
+
+.featureContent {
+  padding: 80px 12%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+
+  h2 {
+    font-size: clamp(32px, 3.5vw, 52px);
+    line-height: 1.2;
+    margin: 20px 0 30px;
+
+    span {
+      color: #b18a50;
+    }
+  }
+
+  p {
+    color: $muted;
+    line-height: 1.9;
+    margin-bottom: 20px;
+  }
+}
+
+.textButton {
+  border: none;
+  border-bottom: 2px solid $gold;
+  background: transparent;
+  color: $dark;
+  padding: 10px 0;
+  margin-top: 20px;
+  font-weight: 800;
+  cursor: pointer;
+
+  span {
+    margin-left: 12px;
+  }
+}
+
+.benefitsSection {
+  padding: 110px 5%;
+}
+
+.benefitsGrid {
+  max-width: 1200px;
+  margin: 60px auto 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.benefitCard {
+  padding: 32px 25px;
+  border: 1px solid #eae5dc;
+  border-radius: 14px;
+  background: $white;
+
+  h3 {
+    margin: 22px 0 12px;
+    font-size: 19px;
+  }
+
+  p {
+    font-size: 14px;
+    color: $muted;
+    line-height: 1.8;
+  }
+}
+
+.benefitIcon {
+  font-size: 32px;
+}
+
+.faqSection {
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 90px 25px 130px;
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 80px;
+}
+
+.faqIntro {
+  h2 {
+    font-size: clamp(32px, 3.5vw, 48px);
+    line-height: 1.2;
+    margin: 20px 0;
+
+    span {
+      color: #b18a50;
+    }
+  }
+
+  p {
+    color: $muted;
+    line-height: 1.8;
+  }
+}
+
+.faqItem {
+  border-bottom: 1px solid #e1ded8;
+}
+
+.faqQuestion {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 25px 0;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: $dark;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.faqToggle {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e1ded8;
+  border-radius: 50%;
+  font-size: 22px;
+  color: #b18a50;
+}
+
+.faqAnswer {
+  padding: 0 35px 25px 0;
+  animation: fadeUp 0.25s ease;
+
+  p {
+    color: $muted;
+    font-size: 14px;
+    line-height: 1.9;
+  }
+}
+
+.ctaSection {
+  position: relative;
+  padding: 120px 20px;
+  text-align: center;
+  color: white;
+  background:
+    url("https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1800&q=85")
+    center / cover no-repeat;
+}
+
+.ctaOverlay {
+  background: rgba(12, 31, 42, 0.78);
+}
+
+.ctaContent {
+  position: relative;
+  z-index: 1;
+
+  h2 {
+    font-size: clamp(36px, 5vw, 66px);
+    line-height: 1.15;
+    margin: 25px 0;
+
+    span {
+      color: #e5c48f;
+    }
+  }
+
+  p {
+    color: #d7e0e3;
+    margin-bottom: 35px;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1000px) {
+  .stepsGrid,
+  .benefitsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .faqSection {
+    gap: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 620px;
+    height: auto;
+    padding: 100px 0;
+  }
+
+  .heroContent h1 {
+    letter-spacing: -1px;
+  }
+
+  .heroBottom {
+    display: none;
+  }
+
+  .featureSection,
+  .faqSection {
+    grid-template-columns: 1fr;
+  }
+
+  .featureImage {
+    min-height: 350px;
+  }
+
+  .imageBadge {
+    right: 20px;
+    bottom: 20px;
+  }
+
+  .featureContent {
+    padding: 65px 7%;
+  }
+
+  .intro {
+    padding-top: 75px;
+  }
+}
+
+@media (max-width: 520px) {
+  .stepsGrid,
+  .benefitsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .stepsSection,
+  .benefitsSection {
+    padding-bottom: 75px;
+  }
+
+  .stepCard {
+    min-height: 250px;
+  }
+
+  .heroContent p {
+    font-size: 15px;
+  }
+
+  .faqSection {
+    padding-bottom: 80px;
+  }
+
+  .ctaSection {
+    padding: 85px 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroContent,
+  .faqAnswer {
+    animation: none;
+  }
+
+  .stepCard,
+  .tripCard,
+  .primaryButton,
+  .ctaButton {
+    transition: none;
+  }
+}

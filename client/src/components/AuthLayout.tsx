@@ -1,7 +1,6 @@
 
 import {
-  ArrowRight,
-  Search,
+
   Zap,
   Crown,
   MapPin,
@@ -9,37 +8,14 @@ import {
 
 
 import styles from "./authLayout.module.scss"
-import { Outlet } from "react-router-dom";
+import {  Outlet } from "react-router-dom";
+import SiteHeader from "./SiteHeader";
 
 const  AuthLayout = ()=> {
   return (
     <div className={styles.auth_page}>
-      <header className={styles.auth_navbar}>
-        <a href="#" className= {styles.auth_logo}>
-          <span className={styles.auth_logo_icon}>✦</span>
-          TripGenius
-        </a>
-
-        <nav className={styles.auth_nav_links} >
-          <a href="#">Destinations</a>
-          <a href="#">How It Works</a>
-          <a href="#">About</a>
-          <a href="#">Blog</a>
-        </nav>
-
-        <div className={styles.auth_nav_actions}>
-          <Search size={20} />
-
-          <a href="/login" className={styles.auth_nav_signin}>
-            Sign In
-          </a>
-
-          <a href="/register" className={styles.auth_plan_button}>
-            Plan My Trip <ArrowRight size={18} />
-          </a>
-        </div>
-      </header>
-
+      
+<SiteHeader />
       <main className={styles.auth_main}>
         <section className={styles.auth_intro}>
           <p className={styles.auth_eyebrow}>JOIN TRIPGENIUS</p>

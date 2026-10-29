@@ -12,9 +12,22 @@ import getUserProfileRouter from "./routes/getProfileRoute.js";
 import forgotPasswordRouter from "./routes/forgotPasswordRoute.js";
 import verifyRouter from "./routes/verificationRoute.js";
 import resendOtpRouter from "./routes/resendOtpRoute.js";
+import destinationRouter from "./routes/destinationsRoute.js";
+import editUpdateRouter from "./routes/editProfileRoute.js";
 
 const app = express();
-dotenv.config();
+
+
+dotenv.config({
+  path: "./.env",
+  override: true,
+});
+
+console.log("SERVER EMAIL:", process.env.EMAIL_USER);
+console.log(
+  "PASSWORD LENGTH:",
+  process.env.EMAIL_PASSWORD?.replace(/\s/g, "").length
+);
 mongoose.connect(process.env.MONGO_URI).then(() => {
   console.log("Connected to MongoDB");
 }).catch((error) => {
@@ -42,8 +55,8 @@ app.use(getTripRouter);
 app.use(getMyTripsRouter);
 app.use(verifyRouter)
 app.use(resendOtpRouter)
-
-
+app.use(destinationRouter)
+app.use(editUpdateRouter)
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

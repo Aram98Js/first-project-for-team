@@ -1,16 +1,146 @@
+
+const LABELS = {
+  budget: {
+    low: "Экономный",
+    medium: "Средний",
+    high: "Высокий",
+    luxury: "Люкс",
+  },
+
+  pace: {
+    slow: "Спокойный",
+    moderate: "Умеренный",
+    normal: "Умеренный",
+    fast: "Активный",
+  },
+
+  transport: {
+    walking: "Пешком",
+    public: "Общественный транспорт",
+    car: "Автомобиль",
+    mixed: "Комбинированный",
+  },
+
+  diet: {
+    none: "Без ограничений",
+    vegetarian: "Вегетарианское",
+    vegan: "Веганское",
+    halal: "Халяль",
+  },
+
+  dayStart: {
+    early: "Раннее начало около 07:00",
+    normal: "Обычное начало около 09:00",
+    late: "Позднее начало около 11:00",
+  },
+};
+
+
+// ====================================
+// 1. VALIDATE QUESTIONNAIRE
+// ====================================
+
+function validateQuestionnaire(q) {
+  if (!q || typeof q !== "object") {
+    throw new Error("Данные поездки отсутствуют");
+  }
+
+  const days = Number(q.days);
+
+  if (
+    !q.destination ||
+    typeof q.destination !== "string" ||
+    !q.destination.trim()
+  ) {
+    throw new Error("Не указано направление поездки");
+  }
+
+  if (!Number.isInteger(days) || days < 1 || days > 30) {
+    throw new Error("Количество дней должно быть от 1 до 30");
+  }
+
+  return {
+    ...q,
+    destination: q.destination.trim(),
+    days,
+    adults: Number(q.adults) > 0 ? Number(q.adults) : 1,
+    children: Number(q.children) >= 0
+      ? Number(q.children)
+      : 0,
+    currency: q.currency || "USD",
+    budget: q.budget || "medium",
+    pace: q.pace || "normal",
+    transport: q.transport || "public",
+    diet: q.diet || "none",
+    dayStart: q.dayStart || "normal",
+    interests: Array.isArray(q.interests)
+      ? q.interests
+      : [],
+  };
+}
+
+
+// ====================================
+// 2. MOCK PLAN
+// ====================================
+
 function buildMockPlan(q) {
-  const days = Array.from({ length: q.days }, (_, i) => ({
-    day: i + 1,
-    title: `День ${i + 1}: ${q.destination}`,
-    summary: "Тестовый план. Добавь GEMINI_API_KEY в .env, чтобы получить настоящий маршрут.",
-    activities: [
-      { time: "09:00", title: "Завтрак", description: "Местная кухня недалеко от отеля", category: "food", cost: 10, place: "" },
-      { time: "11:00", title: "Главные достопримечательности", description: `Осмотр центра: ${q.destination}`, category: "history", cost: 15, place: "" },
-      { time: "14:00", title: "Обед", description: "Ресторан с национальными блюдами", category: "food", cost: 20, place: "" },
-      { time: "16:00", title: "Свободное время", description: (q.interests || []).join(", ") || "Прогулка по городу", category: "rest", cost: 0, place: "" },
-      { time: "19:00", title: "Ужин", description: "Вечерняя прогулка и ужин", category: "food", cost: 25, place: "" },
-    ],
-  }));
+  const days = Array.from(
+    { length: q.days },
+    (_, i) => ({
+      day: i + 1,
+
+      title: `День ${i + 1}: ${q.destination}`,
+
+      summary:
+        "Тестовый план. Добавь GEMINI_API_KEY в .env, чтобы получить настоящий маршрут.",
+
+      activities: [
+        {
+          time: "09:00",
+          title: "Завтрак",
+          description: "Местная кухня недалеко от отеля",
+          category: "food",
+          cost: 10,
+          place: "",
+        },
+        {
+          time: "11:00",
+          title: "Главные достопримечательности",
+          description: `Осмотр центра: ${q.destination}`,
+          category: "history",
+          cost: 15,
+          place: "",
+        },
+        {
+          time: "14:00",
+          title: "Обед",
+          description: "Ресторан с национальными блюдами",
+          category: "food",
+          cost: 20,
+          place: "",
+        },
+        {
+          time: "16:00",
+          title: "Свободное время",
+          description:
+            q.interests.join(", ") || "Прогулка по городу",
+          category: "rest",
+          cost: 0,
+          place: "",
+        },
+        {
+          time: "19:00",
+          title: "Ужин",
+          description: "Вечерняя прогулка и ужин",
+          category: "food",
+          cost: 25,
+          place: "",
+        },
+      ],
+    })
+  );
+
   return {
     overview: {
       summary: `Тестовый маршрут по направлению: ${q.destination}.`,
@@ -25,15 +155,32 @@ function buildMockPlan(q) {
   };
 }
 
+
+// ====================================
+// 3. BUILD GEMINI PROMPT
+// ====================================
+
 function buildPrompt(q) {
-  const who = `${q.adults} взрослых` + (q.children ? ` и ${q.children} детей` : "");
-  const budgetText = LABELS.budget[q.budget] || q.budget;
+  const who =
+    `${q.adults} взрослых` +
+    (q.children > 0
+      ? ` и ${q.children} детей`
+      : "");
+
+  const budgetText =
+    LABELS.budget[q.budget] || q.budget;
+
   const budgetLine = q.dailyBudget
     ? `${budgetText}; ориентир ${q.dailyBudget} ${q.currency} в день на всю компанию`
     : budgetText;
-  const interests = (q.interests || []).join(", ") || "не указаны, предложи разнообразную программу";
 
-  return `Ты опытный тревел-планировщик. Составь подробный маршрут поездки.
+  const interests =
+    q.interests.join(", ") ||
+    "не указаны, предложи разнообразную программу";
+
+  return `
+Ты опытный тревел-планировщик.
+Составь подробный маршрут поездки.
 
 Направление: ${q.destination}
 Длительность: ${q.days} дн.
@@ -45,21 +192,28 @@ function buildPrompt(q) {
 Темп: ${LABELS.pace[q.pace] || "обычный"}
 Передвижение: ${LABELS.transport[q.transport] || "общественный транспорт"}
 Питание: ${LABELS.diet[q.diet] || "без ограничений"}
-Начало дня: ${LABELS.dayStart[q.dayStart] || "обычный старт около 09:00"}
+Начало дня: ${LABELS.dayStart[q.dayStart] || "около 09:00"}
 Обязательно включить: ${q.mustSee || "нет"}
 Пожелания: ${q.notes || "нет"}
 
 Правила:
-- Используй только реально существующие и известные места, не выдумывай названия и адреса.
-- Группируй места по районам, чтобы не терять время на дорогу.
-- Если есть дети, добавь места, подходящие для детей.
-- Если указана дата, учитывай сезон и погоду.
-- cost: ориентировочная сумма на всю компанию в ${q.currency}, число; 0, если бесплатно.
+- Используй только реально существующие и известные места.
+- Не выдумывай названия и адреса.
+- Группируй места по районам.
+- Учитывай количество путешественников.
+- Если есть дети, добавь подходящие для них места.
+- Если указана дата, учитывай сезон.
+- Не утверждай точный прогноз погоды без актуальных данных.
+- cost: примерная стоимость на всю компанию в ${q.currency}.
 - category: одно из food, museum, shopping, nature, history, nightlife, transport, rest, other.
-- estimatedTotal: примерная сумма на всю поездку на всю компанию (еда, местный транспорт, билеты, развлечения; без авиабилетов и жилья).
-- Пиши по-русски, коротко и конкретно.
+- estimatedTotal: примерная сумма на всю поездку без авиабилетов и жилья.
+- Пиши по-русски.
+- Верни только корректный JSON.
+- Ровно ${q.days} дней.
+- Для каждого дня предложи 4-6 активностей.
 
-Верни ТОЛЬКО JSON такого вида:
+Формат JSON:
+
 {
   "overview": {
     "summary": "2-3 предложения о поездке",
@@ -68,7 +222,12 @@ function buildPrompt(q) {
     "currency": "${q.currency}",
     "tips": ["полезный совет"],
     "packing": ["что взять с собой"],
-    "phrases": [{"local": "фраза на местном языке", "meaning": "перевод"}]
+    "phrases": [
+      {
+        "local": "фраза на местном языке",
+        "meaning": "перевод"
+      }
+    ]
   },
   "days": [
     {
@@ -76,109 +235,255 @@ function buildPrompt(q) {
       "title": "название дня",
       "summary": "одно предложение о дне",
       "activities": [
-        {"time": "09:00", "title": "что делаем", "description": "подробности", "category": "food", "cost": 0, "place": "название места"}
+        {
+          "time": "09:00",
+          "title": "что делаем",
+          "description": "подробности",
+          "category": "food",
+          "cost": 0,
+          "place": "название места"
+        }
       ]
     }
   ]
 }
-Ровно ${q.days} дней в массиве days.`;
+`;
 }
+
+
+// ====================================
+// 4. PARSE GEMINI JSON
+// ====================================
 
 function parseJson(text) {
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start === -1 || end <= start) {
-    throw new Error("AI вернул ответ не в формате JSON");
+  if (!text || typeof text !== "string") {
+    throw new Error("Gemini вернул пустой ответ");
   }
-  return JSON.parse(text.slice(start, end + 1));
+
+  const cleanedText = text
+    .replace(/```json/gi, "")
+    .replace(/```/g, "")
+    .trim();
+
+  try {
+    return JSON.parse(cleanedText);
+  } catch {
+    const start = cleanedText.indexOf("{");
+    const end = cleanedText.lastIndexOf("}");
+
+    if (start === -1 || end <= start) {
+      throw new Error(
+        "AI вернул ответ не в формате JSON"
+      );
+    }
+
+    return JSON.parse(
+      cleanedText.slice(start, end + 1)
+    );
+  }
 }
 
-const list = (v) => (Array.isArray(v) ? v.map((x) => String(x)).filter(Boolean) : []);
+
+// ====================================
+// 5. ARRAY NORMALIZATION
+// ====================================
+
+const list = (value) =>
+  Array.isArray(value)
+    ? value
+        .map((item) => String(item))
+        .filter(Boolean)
+    : [];
+
+
+// ====================================
+// 6. NORMALIZE GEMINI RESPONSE
+// ====================================
 
 function normalize(raw, q) {
-  const days = Array.isArray(raw.days) ? raw.days : [];
-  if (!days.length) throw new Error("AI не вернул план по дням");
+  if (!raw || typeof raw !== "object") {
+    throw new Error("AI вернул некорректные данные");
+  }
+
+  const days = Array.isArray(raw.days)
+    ? raw.days
+    : [];
+
+  if (!days.length) {
+    throw new Error("AI не вернул план по дням");
+  }
+
+  if (days.length !== q.days) {
+    throw new Error(
+      `AI вернул ${days.length} дней вместо ${q.days}`
+    );
+  }
+
   const ov = raw.overview || {};
+
+  const categories = new Set([
+    "food",
+    "museum",
+    "shopping",
+    "nature",
+    "history",
+    "nightlife",
+    "transport",
+    "rest",
+    "other",
+  ]);
 
   return {
     overview: {
-      summary: ov.summary || "",
-      bestTime: ov.bestTime || "",
-      estimatedTotal: Number.isFinite(Number(ov.estimatedTotal)) ? Number(ov.estimatedTotal) : 0,
-      currency: ov.currency || q.currency,
+      summary: String(ov.summary || ""),
+      bestTime: String(ov.bestTime || ""),
+
+      estimatedTotal:
+        Number.isFinite(Number(ov.estimatedTotal))
+          ? Math.max(0, Number(ov.estimatedTotal))
+          : 0,
+
+      currency: q.currency,
+
       tips: list(ov.tips),
       packing: list(ov.packing),
-      phrases: (Array.isArray(ov.phrases) ? ov.phrases : [])
-        .map((p) => ({ local: String(p?.local || ""), meaning: String(p?.meaning || "") }))
+
+      phrases: (
+        Array.isArray(ov.phrases)
+          ? ov.phrases
+          : []
+      )
+        .map((p) => ({
+          local: String(p?.local || ""),
+          meaning: String(p?.meaning || ""),
+        }))
         .filter((p) => p.local),
     },
-    days: days.slice(0, q.days).map((d, i) => ({
-      day: Number(d.day) || i + 1,
-      title: d.title || `День ${i + 1}`,
-      summary: d.summary || "",
-      activities: (Array.isArray(d.activities) ? d.activities : []).map((a) => ({
-        time: a.time || "",
-        title: a.title || "",
-        description: a.description || "",
-        category: a.category || "other",
-        cost: Number.isFinite(Number(a.cost)) ? Number(a.cost) : 0,
-        place: a.place || "",
+
+    days: days.map((d, i) => ({
+      day: i + 1,
+
+      title: String(
+        d?.title || `День ${i + 1}`
+      ),
+
+      summary: String(d?.summary || ""),
+
+      activities: (
+        Array.isArray(d?.activities)
+          ? d.activities
+          : []
+      ).map((a) => ({
+        time: String(a?.time || ""),
+        title: String(a?.title || ""),
+        description: String(a?.description || ""),
+
+        category: categories.has(a?.category)
+          ? a.category
+          : "other",
+
+        cost: Number.isFinite(Number(a?.cost))
+          ? Math.max(0, Number(a.cost))
+          : 0,
+
+        place: String(a?.place || ""),
       })),
     })),
   };
 }
 
-export async function generateTripPlan(q) {
+
+// ====================================
+// 7. GENERATE TRIP PLAN
+// ====================================
+
+
+export async function generateTripPlan(questionnaire) {
+  const q = validateQuestionnaire(questionnaire);
+
   if (!process.env.GEMINI_API_KEY) {
-    console.warn("GEMINI_API_KEY не задан, возвращаю тестовый план");
+    console.warn("GEMINI_API_KEY отсутствует");
     return buildMockPlan(q);
   }
 
-<<<<<<< HEAD
   const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
-=======
-  const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+console.log("Gemini model:", model);
+  const url =
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
 
-  const prompt = `Составь план путешествия.
-Направление: ${q.destination}
-Дней: ${q.days}
-Бюджет: ${q.budget}
-Путешественников: ${q.travelers}
-Интересы: ${(q.interests || []).join(", ") || "не указаны"}
-Темп: ${q.pace}
+  const prompt = buildPrompt(q);
 
-Верни ТОЛЬКО JSON-массив в формате:
-[{"day":1,"title":"...","activities":[{"time":"09:00","title":"...","description":"..."}]}]
-Ровно ${q.days} дней, 4-6 активностей в день. Пиши по-русски.`;
->>>>>>> 890732a (corrections)
+  let response;
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-    {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-goog-api-key": process.env.GEMINI_API_KEY,
       },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: buildPrompt(q) }] }],
+        contents: [
+          {
+            parts: [{ text: prompt }],
+          },
+        ],
         generationConfig: {
           responseMimeType: "application/json",
           maxOutputTokens: 16384,
         },
       }),
-    }
-  );
+    });
 
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`Gemini error ${response.status}: ${errText}`);
+    if (response.ok) {
+      break;
+    }
+
+    const retryable = [429, 500, 502, 503, 504]
+      .includes(response.status);
+
+    if (!retryable || attempt === 3) {
+      const errorText = await response.text();
+
+      throw new Error(
+        `Gemini error ${response.status}: ${errorText}`
+      );
+    }
+
+    const delay =
+      1000 * 2 ** attempt +
+      Math.floor(Math.random() * 500);
+
+    console.log(
+      `Gemini ${response.status}: retry ${attempt + 1}/3`
+    );
+
+    await new Promise((resolve) =>
+      setTimeout(resolve, delay)
+    );
   }
 
+  // Read Gemini response
   const data = await response.json();
-  const text = (data.candidates?.[0]?.content?.parts || [])
-    .map((p) => p.text || "")
+
+  const candidate = data.candidates?.[0];
+
+  const text = (candidate?.content?.parts || [])
+    .map((part) => part.text || "")
     .join("");
 
-  return normalize(parseJson(text), q);
+  if (!text) {
+    throw new Error(
+      `Gemini returned empty response: ${
+        candidate?.finishReason || "unknown"
+      }`
+    );
+  }
+
+  // Convert JSON text into an object
+  const parsedPlan = parseJson(text);
+
+  // Return normalized trip plan
+  return normalize(parsedPlan, q);
 }
+

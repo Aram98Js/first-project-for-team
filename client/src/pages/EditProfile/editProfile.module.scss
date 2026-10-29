@@ -1,0 +1,202 @@
+
+.page {
+  min-height: 100vh;
+  background: #f8f9fc;
+  padding: 60px 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 30px;
+
+  h1 {
+    font-size: 34px;
+    color: #19344d;
+    margin: 20px 0 10px;
+  }
+
+  p {
+    color: #788492;
+    font-size: 15px;
+  }
+}
+
+.backButton {
+  border: none;
+  background: none;
+  color: #b68b54;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.profileCard {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 12px 45px rgba(20, 45, 70, 0.06);
+}
+
+.avatarSection {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #edf0f3;
+
+  h2 {
+    color: #19344d;
+    font-size: 22px;
+    margin: 0 0 5px;
+  }
+
+  p {
+    color: #8a96a3;
+    margin: 0;
+  }
+}
+
+.avatar {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #19344d, #41647c);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #263b4c;
+  }
+
+  input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #e0e5eb;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+    background: white;
+    transition: 0.2s;
+
+    &:focus {
+      border-color: #c9a46c;
+      box-shadow: 0 0 0 3px rgba(201, 164, 108, 0.12);
+    }
+
+    &:disabled {
+      background: #f4f6f8;
+      color: #9aa5b1;
+      cursor: not-allowed;
+    }
+  }
+
+  small {
+    font-size: 12px;
+    color: #99a3ad;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 35px;
+
+  button {
+    padding: 13px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+}
+
+.cancelButton {
+  border: 1px solid #dfe4e8;
+  background: white;
+  color: #536574;
+
+  &:hover {
+    background: #f5f7f9;
+  }
+}
+
+.saveButton {
+  border: none;
+  background: #19344d;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #284c68;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.error {
+  color: #c62828;
+  margin-top: 20px;
+}
+
+.success {
+  color: #2e7d32;
+  margin-top: 20px;
+}
+
+.loading {
+  padding: 100px 20px;
+  text-align: center;
+  color: #19344d;
+}
+
+@media (max-width: 650px) {
+  .page {
+    padding: 30px 15px;
+  }
+
+  .profileCard {
+    padding: 24px 18px;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .header h1 {
+    font-size: 28px;
+  }
+
+  .actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}

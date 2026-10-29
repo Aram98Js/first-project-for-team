@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 import styles from "./profile.module.scss";
+import Button from "../../components/Ui/Button";
 
 type ProfileUser = {
   _id: string;
@@ -184,15 +185,16 @@ function Profile() {
                 </p>
               </div>
 
-              <button
+              <Button
+              onClick={()=>navigate("/edit-profile")}
                 type="button"
                 className={styles.editButton}
-                disabled
-                title="Editing will be available soon"
+                
+                
               >
                 <Pencil size={16} />
                 Edit Profile
-              </button>
+              </Button>
             </div>
 
             <div className={styles.details}>
@@ -251,6 +253,10 @@ function Profile() {
 
               <Link to="/create-trip" className={styles.exploreButton}>
                 Explore Destinations 
+                <ArrowRight size={17} />
+              </Link>
+              <Link to="/my-trips" className={styles.exploreButton}>
+               My Trips
                 <ArrowRight size={17} />
               </Link>
             </div>

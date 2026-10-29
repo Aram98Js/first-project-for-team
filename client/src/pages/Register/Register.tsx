@@ -80,7 +80,7 @@ return
 }
     setErrors([]);
    if (response.ok && data.requiresVerification) {
-  navigate("/verify-email", {
+  navigate("/otp-verification", {
     state: {
       email: data.email
     }
